@@ -2,7 +2,7 @@ resource "azurerm_subnet" "current" {
     lifecycle {
         ignore_changes           = [ 
             tags, 
-            delegation[*].service_delegation.actions
+            delegation[0].service_delegation[0].actions
         ]
     }
     name                                            = var.name

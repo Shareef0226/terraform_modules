@@ -10,6 +10,8 @@ resource "azurerm_function_app" "current" {
     lifecycle {
         ignore_changes           = [ 
             tags, 
+            app_settings,
+            connection_string
         ]
     }
     name                            = var.name
