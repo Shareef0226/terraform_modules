@@ -1,4 +1,9 @@
 resource "azurerm_storage_account" "current" {
+    lifecycle {
+        ignore_changes           = [ 
+            tags, 
+        ]
+    }
     name                              = var.name
     resource_group_name               = var.resource_group_name
     location                          = var.location
@@ -15,9 +20,7 @@ resource "azurerm_storage_account" "current" {
     queue_encryption_key_type         = var.queue_encryption_key_type
     shared_access_key_enabled         = var.shared_access_key_enabled
     table_encryption_key_type         = var.table_encryption_key_type
-    tags                              = merge(var.tags, {
-        ROLE_PURPOSE  = "storageAccounts"
-    })
+    tags                              = var.tags
 
     blob_properties {
         change_feed_enabled      = var.blob_properties.change_feed_enabled

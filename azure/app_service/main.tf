@@ -15,7 +15,7 @@ resource "azurerm_app_service" "current" {
     client_cert_mode                  = var.client_cert_mode
     enabled                           = var.enabled
     https_only                        = var.https_only
-    tags                              = merge(var.tags, {"ROLE_PURPOSE"  = "sites"})
+    tags                              = var.tags
 
     dynamic auth_settings {
         for_each = var.auth_settings[*]

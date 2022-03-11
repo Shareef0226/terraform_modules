@@ -1,6 +1,38 @@
-locals {
-    admin_policies = {
-        certificate_permissions = [
+resource "azurerm_key_vault" "current" {
+    lifecycle {
+        ignore_changes           = [ 
+            tags, 
+        ]
+    }
+    location                        = var.location
+    name                            = var.name
+    resource_group_name             = var.resource_group_name
+    tenant_id                       = var.tenant_id
+    sku_name                        = var.sku_name
+    enable_rbac_authorization       = var.enable_rbac_authorization
+    enabled_for_deployment          = var.enabled_for_deployment
+    enabled_for_disk_encryption     = var.enabled_for_disk_encryption
+    enabled_for_template_deployment = var.enabled_for_template_deployment
+    purge_protection_enabled        = var.purge_protection_enabled
+    soft_delete_retention_days      = var.soft_delete_retention_days
+    tags                            = var.tags
+    
+    network_acls {
+        bypass                     = var.network_acls.bypass
+        default_action             = var.network_acls.default_action
+        ip_rules                   = var.network_acls.ip_rules
+        virtual_network_subnet_ids = var.network_acls.virtual_network_subnet_ids
+    }
+}
+
+resource "azurerm_key_vault_access_policy" "current" {
+    key_vault_id = azurerm_key_vault.current.id
+    tenant_id    = var.tenant_id
+  
+    application_id = null
+    object_id = var.terraform_identity_object_id
+
+    certificate_permissions = [
             "Get",
             "List",
             "Update",
@@ -16,8 +48,9 @@ locals {
             "ListIssuers",
             "SetIssuers",
             "DeleteIssuers",
-        ],
-         key_permissions         = [
+            "Purge"
+        ]
+        key_permissions         = [
             "Get",
             "List",
             "Update",
@@ -27,6 +60,13 @@ locals {
             "Recover",
             "Backup",
             "Restore",
+            "Sign",
+            "Verify",
+            "Encrypt",
+            "Decrypt",
+            "WrapKey",
+            "UnwrapKey",
+            "Purge"
         ]
         secret_permissions      = [
             "Get",
@@ -36,46 +76,22 @@ locals {
             "Recover",
             "Backup",
             "Restore",
+            "Purge"
         ]
-        storage_permissions     = []
-    }
-}
-resource "azurerm_key_vault" "current" {
-    location                        = var.location
-    name                            = var.name
-    resource_group_name             = var.resource_group_name
-    tenant_id                       = var.tenant_id
-    sku_name                        = "premium"
-    enable_rbac_authorization       = false
-    enabled_for_deployment          = true
-    enabled_for_disk_encryption     = true
-    enabled_for_template_deployment = true
-    purge_protection_enabled        = true
-    soft_delete_retention_days      = var.soft_delete_retention_days
-    tags                            = merge(var.tags, {
-        ROLE_PURPOSE  = "vaults"
-    })
-    network_acls {
-        bypass                     = "AzureServices"
-        default_action             = "Allow"
-        ip_rules                   = []
-        virtual_network_subnet_ids = []
-    }
-
-    timeouts {}
-}
-
-resource "azurerm_key_vault_access_policy" "admins" {
-    count = length(var.admins)
-
-    key_vault_id = azurerm_key_vault.current.id
-    tenant_id    = var.tenant_id
-  
-    application_id = var.admins[count.index].application_id 
-    object_id = var.admins[count.index].object_id
-
-    certificate_permissions = local.admin_policies.certificate_permissions
-    key_permissions = local.admin_policies.key_permissions
-    secret_permissions = local.admin_policies.secret_permissions
-    storage_permissions = local.admin_policies.storage_permissions
+        storage_permissions     = [
+            "Get",
+            "GetSAS",
+            "List",
+            "ListSAS",
+            "Set",
+            "SetSAS",
+            "Delete",
+            "DeleteSAS",
+            "Update",
+            "RegenerateKey",
+            "Recover",
+            "Backup",
+            "Restore",
+            "Purge"
+        ]
 }

@@ -1,5 +1,10 @@
 resource "azurerm_resource_group" "current"{
-  name            = var.name
-  location        = var.location
-  tags            = var.tags
+    lifecycle {
+          ignore_changes           = [ 
+              tags, 
+          ]
+    }
+    name            = var.name
+    location        = var.location
+    tags            = var.tags
 }

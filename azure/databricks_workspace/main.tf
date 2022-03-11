@@ -1,10 +1,15 @@
 resource "azurerm_databricks_workspace" "current" {
+    lifecycle {
+        ignore_changes           = [ 
+            tags, 
+        ]
+    }
     name                                = var.name
     resource_group_name                 = var.resource_group_name
     location                            = var.location
     sku                                 = var.sku
     managed_resource_group_name         = var.managed_resource_group_name
-    tags                                = merge(var.tags, { ROLE_PURPOSE  = "workspaces" })
+    tags                                = var.tags
     customer_managed_key_enabled        = var.customer_managed_key_enabled
     infrastructure_encryption_enabled   = var.infrastructure_encryption_enabled
     public_network_access_enabled       = var.public_network_access_enabled

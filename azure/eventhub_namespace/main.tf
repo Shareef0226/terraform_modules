@@ -1,4 +1,9 @@
 resource "azurerm_eventhub_namespace" "current" {
+    lifecycle {
+        ignore_changes           = [ 
+            tags, 
+        ]
+    }
     resource_group_name                 = var.resource_group_name
     name                                = var.name
     location                            = var.location

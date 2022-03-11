@@ -1,4 +1,9 @@
 resource "azurerm_mssql_server" "current" {
+    lifecycle {
+        ignore_changes           = [ 
+            tags, 
+        ]
+    }
     location                             = var.location
     name                                 = var.name
     resource_group_name                  = var.resource_group_name

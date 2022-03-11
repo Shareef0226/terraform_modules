@@ -1,4 +1,9 @@
 resource "azurerm_mssql_database" "current" {
+    lifecycle {
+        ignore_changes           = [ 
+            tags, 
+        ]
+    }
     name                        = var.name
     server_id                   = var.server_id
     elastic_pool_id             = var.elastic_pool_id
@@ -11,7 +16,5 @@ resource "azurerm_mssql_database" "current" {
     read_scale                  = var.read_scale
     storage_account_type        = var.storage_account_type
     zone_redundant              = var.zone_redundant
-    tags                        = merge(var.tags, {
-        ROLE_PURPOSE  = "databases"
-    })
+    tags                        = var.tags
 }

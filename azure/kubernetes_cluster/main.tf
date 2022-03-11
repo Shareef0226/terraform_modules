@@ -1,4 +1,9 @@
 resource "azurerm_kubernetes_cluster" "current" {
+    lifecycle {
+        ignore_changes           = [ 
+            tags, 
+        ]
+    }
     location                         = var.location
     name                             = var.name
     resource_group_name              = var.resource_group_name
@@ -13,7 +18,7 @@ resource "azurerm_kubernetes_cluster" "current" {
     open_service_mesh_enabled        = var.open_service_mesh_enabled
     public_network_access_enabled    = var.public_network_access_enabled
     sku_tier                         = var.sku_tier
-    tags                             = merge(var.tags, { ROLE_PURPOSE  = "ManagedClusters" })
+    tags                             = var.tags
 
     default_node_pool {
         name                         = "aksnodepool"

@@ -3,10 +3,15 @@ module "storage" {
     name                = "${var.name}sa"
     resource_group_name = var.resource_group_name
     location            = var.location
-    tags                = merge(var.tags, {"FUNCTION" = var.name} )
+    tags                = var.tags
 }
 
 resource "azurerm_function_app" "current" {
+    lifecycle {
+        ignore_changes           = [ 
+            tags, 
+        ]
+    }
     name                            = var.name
     resource_group_name             = var.resource_group_name
     location                        = var.location
